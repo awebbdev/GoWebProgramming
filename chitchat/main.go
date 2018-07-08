@@ -1,26 +1,42 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 )
 
-func index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to my new Chat Server Under Construction.")
-}
-
-
 func main() {
+	//p("ChitChat", version(), "started at", config.Address)
+
+	// handle static assets
 	mux := http.NewServeMux()
 	files := http.FileServer(http.Dir("/public"))
 	mux.Handle("/static/", http.StripPrefix("/static/", files))
 
-		mux.HandleFunc("/", index)
+	// index
+	mux.HandleFunc("/", index)
+	// error
+	mux.HandleFunc("/err", err)
 
-	server := &http.Server {
-		Addr:		"0.0.0.0:8080",
-		Handler:	mux,
+	// defined in route_auth.go
+/* 	mux.HandleFunc("/login", login)
+	mux.HandleFunc("/logout", logout)
+	mux.HandleFunc("/signup", signup)
+	mux.HandleFunc("/signup_account", signupAccount)
+	mux.HandleFunc("/authenticate", authenticate) */
+
+	// defined in route_thread.go
+/* 	mux.HandleFunc("/thread/new", newThread)
+	mux.HandleFunc("/thread/create", createThread)
+	mux.HandleFunc("/thread/post", postThread)
+	mux.HandleFunc("/thread/read", readThread) */
+
+	// starting up the server
+	server := &http.Server{
+		Addr:           "0.0.0.0:8080",
+		Handler:        mux,
+		//ReadTimeout:    time.Duration(config.ReadTimeout * int64(time.Second)),
+		//WriteTimeout:   time.Duration(config.WriteTimeout * int64(time.Second)),
+		//MaxHeaderBytes: 1 << 20,
 	}
 	server.ListenAndServe()
-
 }
