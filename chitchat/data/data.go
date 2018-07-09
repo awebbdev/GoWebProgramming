@@ -5,15 +5,32 @@ import (
 	"crypto/sha1"
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
+	// Using the blank identifier in order to solely
+	// provide the side-effects of the package.
+	// Eseentially the side effect is calling the `init()`
+	// method of `lib/pq`:
+	//	func init () {  sql.Register("postgres", &Driver{} }
+	// which you can see at `github.com/lib/pq/conn.go`
+	_ "github.com/lib/pq"  
 	"log"
 )
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "AdamWebb"
+	password = "Maria1013Irel@nd"
+	dbname   = "chitchat"
+  )
 
 var Db *sql.DB
 
 func init() {
 	var err error
-	Db, err = sql.Open("postgres", "dbname=chitchat sslmode=disable")
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+	Db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
